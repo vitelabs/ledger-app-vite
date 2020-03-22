@@ -231,7 +231,6 @@ UX_STEP_CB(
     pb,
     libv_bagl_display_address_callback(true),
     {
-        &C_icon_validate_14,
         "Confirm",
     });
 UX_STEP_CB(
@@ -352,7 +351,6 @@ UX_STEP_CB(
     pbb,
     libv_bagl_confirm_sign_receive_block_callback(true),
     {
-        &C_icon_validate_14,
         "Accept",
         "and send",
     });
