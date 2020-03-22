@@ -21,7 +21,6 @@
 #include "os_io_seproxyhal.h"
 
 #include "glyphs.h"
-#include "coins.h"
 #include "libv_internal.h"
 #include "libv_bagl.h"
 
@@ -29,8 +28,6 @@
 
 #define ACCOUNT_BUF_LEN ( \
     LIBV_ACCOUNT_STRING_BASE_LEN \
-    + MAX(sizeof(COIN_PRIMARY_PREFIX), \
-          sizeof(COIN_SECONDARY_PREFIX)) \
     + 1 \
 )
 union {
@@ -49,11 +46,9 @@ libv_state_t bagl_state;
 void ui_write_address_truncated(char *label,
                                 const libv_public_key_t publicKey) {
     const size_t addressLen = libv_address_format((uint8_t *)label, publicKey);
-    const size_t prefixLen = addressLen - LIBV_ACCOUNT_STRING_BASE_LEN;
-
-    os_memset(label + prefixLen + 5, '.', 2);
-    os_memmove(label + prefixLen + 7, label + addressLen - 5, 5);
-    label[prefixLen+12] = '\0';
+    os_memset(label, '.', 2);
+    os_memmove(label + 2, label + 5 + 40, 10);
+    label[2+10] = '\0';
 }
 
 void ui_write_address_full(char *label,
