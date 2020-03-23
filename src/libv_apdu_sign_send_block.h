@@ -29,10 +29,12 @@ typedef struct {
     libv_address_t toAddress;
     libv_token_id_t tokenId;
     libv_amount_t amount;
+    libv_amount_t fee;
     libv_hash_t blockHash;
     uint8_t data[64]; // truncated
     uint64_t dataLen;
     bool dataIsNote;
+    bool hasFee;
     libv_amount_formatter_t amountFmt;
 } libv_apdu_sign_send_block_request_t;
 

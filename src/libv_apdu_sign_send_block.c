@@ -113,6 +113,16 @@ uint16_t libv_apdu_sign_send_block(libv_apdu_response_t *resp) {
     os_memmove(req.toAddress, block_infix.toAddress, sizeof(req.toAddress));
     os_memmove(req.tokenId, block_infix.tokenId, sizeof(req.tokenId));
     os_memmove(req.amount, block_infix.amount, sizeof(req.amount));
+    os_memmove(req.fee, block_suffix.fee, sizeof(req.fee));
+
+    libv_amount_t zeroAmount;
+    os_memset(&zeroAmount, 0, sizeof(libv_amount_t));
+
+    if (os_memcmp(zeroAmount, req.fee, sizeof(libv_amount_t)) == 0) {
+        req.hasFee = false;
+    } else {
+        req.hasFee = true;
+    }
 
     if (hasCachedData) {
         libv_apdu_cache_send_block_data_request_t cached = libv_context_D.cachedSendBlockData;

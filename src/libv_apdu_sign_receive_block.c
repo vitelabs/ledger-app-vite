@@ -122,21 +122,22 @@ uint16_t libv_apdu_sign_receive_block(libv_apdu_response_t *resp) {
 
     black2b(source, sizeof(source), req.blockHash, sizeof(req.blockHash));
 
+    // use auto receive
     // When auto receive is enabled, skip the prompt
-    if (N_libv.autoReceive) {
+    // if (N_libv.autoReceive) {
         uint16_t statusWord = libv_apdu_sign_receive_block_output(resp, &req);
         os_memset(&req, 0, sizeof(req)); // sanitise request data
         return statusWord;
-    } else {
-        // Update app state to confirm the address
-        libv_context_D.state = LIBV_STATE_CONFIRM_RECEIVE_SIGNATURE;
-        os_memmove(&libv_context_D.stateData.signReceiveBlockRequest, &req, sizeof(req));
-        os_memset(&req, 0, sizeof(req)); // sanitise request data
-        app_apply_state();
+    // } else {
+    //     // Update app state to confirm the address
+    //     libv_context_D.state = LIBV_STATE_CONFIRM_RECEIVE_SIGNATURE;
+    //     os_memmove(&libv_context_D.stateData.signReceiveBlockRequest, &req, sizeof(req));
+    //     os_memset(&req, 0, sizeof(req)); // sanitise request data
+    //     app_apply_state();
 
-        resp->ioFlags |= IO_ASYNCH_REPLY;
-        return LIBV_SW_OK;
-    }
+    //     resp->ioFlags |= IO_ASYNCH_REPLY;
+    //     return LIBV_SW_OK;
+    // }
 }
 
 uint16_t libv_apdu_sign_receive_block_output(libv_apdu_response_t *resp, libv_apdu_sign_receive_block_request_t *req) {

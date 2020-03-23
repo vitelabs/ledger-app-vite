@@ -142,27 +142,27 @@ const bagl_element_t *menu_prepro(const ux_menu_entry_t *menu_entry, bagl_elemen
     return element;
 }
 
-void menu_settings_autoreceive_change(uint32_t enabled) {
-    libv_set_auto_receive(enabled);
-    // go back to the menu entry
-    UX_MENU_DISPLAY(0, menu_settings, menu_prepro);
-}
+// void menu_settings_autoreceive_change(uint32_t enabled) {
+//     libv_set_auto_receive(enabled);
+//     // go back to the menu entry
+//     UX_MENU_DISPLAY(0, menu_settings, menu_prepro);
+// }
 
-void menu_settings_autoreceive_init(uint32_t ignored) {
-    UNUSED(ignored);
-    UX_MENU_DISPLAY(N_libv.autoReceive ? 1 : 0,
-                    menu_settings_autoreceive, NULL);
-}
+// void menu_settings_autoreceive_init(uint32_t ignored) {
+//     UNUSED(ignored);
+//     UX_MENU_DISPLAY(N_libv.autoReceive ? 1 : 0,
+//                     menu_settings_autoreceive, NULL);
+// }
 
-const ux_menu_entry_t menu_settings_autoreceive[] = {
-    {NULL, menu_settings_autoreceive_change, 0, NULL, "No", NULL, 0, 0},
-    {NULL, menu_settings_autoreceive_change, 1, NULL, "Yes", NULL, 0, 0},
-    UX_MENU_END};
+// const ux_menu_entry_t menu_settings_autoreceive[] = {
+//     {NULL, menu_settings_autoreceive_change, 0, NULL, "No", NULL, 0, 0},
+//     {NULL, menu_settings_autoreceive_change, 1, NULL, "Yes", NULL, 0, 0},
+//     UX_MENU_END};
 
-const ux_menu_entry_t menu_settings[] = {
-    {NULL, menu_settings_autoreceive_init, 0, NULL, "Auto-receive", NULL, 0, 0},
-    {menu_main, NULL, 1, &C_nanos_icon_back, "Back", NULL, 61, 40},
-    UX_MENU_END};
+// const ux_menu_entry_t menu_settings[] = {
+//     {NULL, menu_settings_autoreceive_init, 0, NULL, "Auto-receive", NULL, 0, 0},
+//     {menu_main, NULL, 1, &C_nanos_icon_back, "Back", NULL, 61, 40},
+//     UX_MENU_END};
 
 const ux_menu_entry_t menu_about[] = {
     {NULL, NULL, 0xAB, NULL, "Version", APPVERSION, 0, 0},
@@ -175,7 +175,7 @@ const ux_menu_entry_t menu_about[] = {
 const ux_menu_entry_t menu_main[] = {
     {NULL, NULL, 0xBA, &C_nanos_badge_vite, "Use wallet to",
      "view accounts", 33, 12},
-    {menu_settings, NULL, 0, NULL, "Settings", NULL, 0, 0},
+    // {menu_settings, NULL, 0, NULL, "Settings", NULL, 0, 0},
     {menu_about, NULL, 0, NULL, "About", NULL, 0, 0},
     {NULL, os_sched_exit, 0, &C_nanos_icon_dashboard, "Quit app", NULL, 50, 29},
     UX_MENU_END};
@@ -615,6 +615,22 @@ void ui_confirm_sign_send_block_prepare_confirm_step(void) {
         }
     }
 
+    if (req->hasFee) {
+        libv_amount_formatter_t amountFmt;
+        amountFmt.suffix = "VITE";
+        amountFmt.suffixLen = 4;
+        amountFmt.unitScale = 18;
+        if (ux_step == step++) {
+            strcpy(vars.confirmSignBlock.confirmLabel, "Fee");
+            libv_amount_format(
+                &amountFmt,
+                vars.confirmSignBlock.confirmValue,
+                sizeof(vars.confirmSignBlock.confirmValue),
+                req->fee);
+            return;
+        }
+    }
+
     if (req->dataLen > 0) {
         if (ux_step == step++) {
             strcpy(vars.confirmSignBlock.confirmLabel, "Data");
@@ -715,6 +731,7 @@ void libv_bagl_confirm_sign_send_block(void) {
     }
 
     ux_step_count = 4
+        + (req->hasFee ? 1: 0)
         + (req->dataLen > 0 ? 1: 0)
         // + (req->dataIsNote ? 1: 0)
         + (req->amountFmt.suffixLen == 0 ? 1 : 0);
