@@ -71,6 +71,17 @@ uint8_t const BASE16_ALPHABET[16] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
     'A', 'B', 'C', 'D', 'E', 'F' };
 
+CONTRACT_INFO const CONTRACT_INFO_ARRAY[CONTRACT_INFO_ARRAY_LEN] = {
+    {""}, // 0
+    {""}, // 1
+    {""}, // 2
+    {"Staking Contract "}, // 3
+    {"SBP Contract "}, // 4
+    {"Token Issuance Contract "}, // 5
+    {"Dex Fund Contract "}, // 6
+    {"Dex Trade Contract "}, // 7
+};
+
 TOKEN_INFO const TOKEN_INFO_ARRAY[TOKEN_INFO_ARRAY_LEN] = {
     {{0x45,0xaa,0xae,0x1f,0xf7,0x8d,0x00,0x43,0x19,0x22}, "ATOM-001", 18},
     {{0x2f,0x87,0x5c,0x97,0xd3,0xa5,0x1b,0x66,0xa5,0x9c}, "ANKR-000", 18},

@@ -122,6 +122,36 @@ size_t libv_user_address_format(uint8_t *buffer, const libv_public_key_t publicK
     return libv_address_format(buffer, rawAddress);
 }
 
+size_t libv_contract_address_name(uint8_t *buffer, const libv_address_t rawAddress) {
+
+    uint8_t addressSuffix = rawAddress[20];
+
+    if (addressSuffix != 0x01) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < 19; i++) {
+        if (rawAddress[i] != 0x00) {
+            return 0;
+        }
+    }
+    
+    uint8_t index = rawAddress[19];
+    if (index >= CONTRACT_INFO_ARRAY_LEN) {
+        return 0;
+    }
+
+    CONTRACT_INFO contractInfo = CONTRACT_INFO_ARRAY[index];
+    size_t len = strnlen(contractInfo.addressName, CONTRACT_ADDRESS_NAME_MAX_LEN);
+
+    if (len == 0) {
+        return 0;
+    }
+
+    os_memmove(buffer, contractInfo.addressName, len);
+    return len;  
+}
+
 size_t libv_token_id_format(uint8_t *buffer,
                            const libv_token_id_t tokenId) {
     uint8_t check[2] = { 0, 0, 0, 0, 0 };

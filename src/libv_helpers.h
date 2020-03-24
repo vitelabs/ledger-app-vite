@@ -35,6 +35,8 @@ size_t libv_user_address_format(uint8_t *buffer, const libv_public_key_t publicK
 
 size_t libv_address_format(uint8_t *buffer, const libv_address_t rawAddress);
 
+size_t libv_contract_address_name(uint8_t *buffer, const libv_address_t rawAddress);
+
 void libv_derive_keypair(uint8_t *bip32Path,
                          libv_private_key_t out_privateKey,
                          libv_public_key_t out_publicKey);

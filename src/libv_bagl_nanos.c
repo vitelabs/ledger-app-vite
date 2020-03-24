@@ -71,6 +71,23 @@ void ui_write_address_truncated(char *label, const libv_address_t rawAddress) {
     label[2+10] = '\0';
 }
 
+// true: contract_address_name_full
+// false: address_truncated
+bool ui_write_address_truncated_or_contract_address_name_full(char *label, const libv_address_t rawAddress) {
+
+    const size_t nameLen = libv_contract_address_name((uint8_t *)label, rawAddress);
+    if (nameLen > 0) {
+        label[nameLen] = '\0';
+        return true;
+    } else {
+        const size_t addressLen = libv_address_format((uint8_t *)label, rawAddress);
+        os_memset(label, '.', 2);
+        os_memmove(label + 2, label + 5 + 40, 10);
+        label[2+10] = '\0';
+        return false;
+    }
+}
+
 void ui_write_address_full(char *label, const libv_address_t rawAddress) {
     const size_t addressLen = libv_address_format((uint8_t *)label, rawAddress);
     label[addressLen] = '\0';
@@ -578,10 +595,11 @@ void ui_confirm_sign_send_block_prepare_confirm_step(void) {
     }
 
     if (ux_step == step++) {
-        strcpy(vars.confirmSignBlock.confirmLabel, "To address");
-        ui_write_address_truncated(
-            vars.confirmSignBlock.confirmValue,
-            req->toAddress);
+        if (ui_write_address_truncated_or_contract_address_name_full(vars.confirmSignBlock.confirmValue, req->toAddress)) {
+            strcpy(vars.confirmSignBlock.confirmLabel, "Contract");
+        } else {
+            strcpy(vars.confirmSignBlock.confirmLabel, "To address");
+        }
         return;
     }
 
